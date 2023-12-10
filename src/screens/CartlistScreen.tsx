@@ -20,7 +20,7 @@ const screenWidth = Dimensions.get('screen').width;
 const CartlistScreen = () => {
   const cartList = useSelector((state: any) => state.cart.cartList); //reading the redux state
   const dispatch = useDispatch();
-
+  // Listener for device goBack
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleDeviceBack);
     return () => {
@@ -84,6 +84,7 @@ const CartlistScreen = () => {
                 {
                   text: 'OK',
                   onPress: () => {
+                    // Clear data in to the redux storage
                     dispatch(updateCartList([]));
                   },
                 },
@@ -99,7 +100,7 @@ const CartlistScreen = () => {
           />
           <Text style={styles.buttonText}>Clear Cart</Text>
         </TouchableOpacity>
-        <Text style={styles.totalPrice}>Total: ${calculateTotalPrice()}</Text>
+        <Text style={styles.totalPrice}>Total: ₹{calculateTotalPrice()}</Text>
       </View>
     </View>
   );

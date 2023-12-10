@@ -7,7 +7,7 @@ import {
   Keyboard,
 } from 'react-native';
 import Modal from 'react-native-modal';
-
+// Define the type for the props that BottomSheet component accepts
 type Params = {
   visible: boolean;
   children: JSX.Element;
