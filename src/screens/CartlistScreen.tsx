@@ -1,5 +1,6 @@
 import {
   Alert,
+  BackHandler,
   Dimensions,
   FlatList,
   Pressable,
@@ -8,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateCartList} from '../redux/slices/CartSlice';
@@ -20,13 +21,26 @@ const CartlistScreen = () => {
   const cartList = useSelector((state: any) => state.cart.cartList); //reading the redux state
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleDeviceBack);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleDeviceBack);
+    };
+  }, []);
+
+  const handleDeviceBack = () => {
+    navigate('barcodescreen');
+    return true;
+  };
+
   const calculateTotalPrice = () => {
     let totalPrice = 0;
     if (cartList && cartList.length) {
       cartList?.forEach((item: any) => {
         const price = parseFloat(item.cartPrice); // Convert cartPrice to a number
-        if (!isNaN(price)) {
-          totalPrice += price; // Add the price to the total if it's a valid number
+        const gst = parseFloat(item.cartGST); // Convert cartGST to a number
+        if (!isNaN(price && gst)) {
+          totalPrice += price + gst; // Add the price to the total if it's a valid number
         }
       });
       return totalPrice.toFixed(2); // Return total price with 2 decimal places

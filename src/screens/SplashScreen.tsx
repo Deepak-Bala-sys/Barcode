@@ -16,7 +16,7 @@ const SplashScreen = () => {
         source={require('../assets/images/QR-Logo.png')}
         style={styles.logo}
       />
-      <Text style={styles.task}>QR Code Task</Text>
+      <Text style={styles.task}>Scanner Task</Text>
     </View>
   );
 };

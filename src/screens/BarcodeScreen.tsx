@@ -31,6 +31,7 @@ const BarcodeScreen = () => {
   const [QRRawData, setQRRawData] = useState('');
   const [scannerDeactivate, setScannerDeactivate] = useState(false);
   const [dataSubmitted, setDataSubmitted] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
   let getIndex: number;
 
   useEffect(() => {
@@ -53,25 +54,30 @@ const BarcodeScreen = () => {
       setQRRawData(data.rawData);
       setDataSubmitted(false);
     } else {
-      Alert.alert('Alert', 'Item Already Added', [
-        {
-          text: 'OK',
-          onPress: () => {
-            setName(cartList[getIndex].cartName);
-            setPrice(cartList[getIndex].cartPrice);
-            setGST(cartList[getIndex].cartGST);
-            setQRRawData(cartList[getIndex].QRRawdata);
-            setShowBottomSheet(true);
-            setDataSubmitted(false);
+      Alert.alert(
+        'Alert',
+        'It seems like the item is already in your cart. Would you like to add it again?',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              setName(cartList[getIndex].cartName);
+              setPrice(cartList[getIndex].cartPrice);
+              setGST(cartList[getIndex].cartGST);
+              setQRRawData(cartList[getIndex].QRRawdata);
+              setShowBottomSheet(true);
+              setDataSubmitted(false);
+              setIsEditable(true);
+            },
           },
-        },
-        {
-          text: 'Cancel',
-          onPress: () => {
-            setScannerDeactivate(true);
+          {
+            text: 'Cancel',
+            onPress: () => {
+              setScannerDeactivate(true);
+            },
           },
-        },
-      ]);
+        ],
+      );
     }
   };
   // For reset the scanner
@@ -99,6 +105,7 @@ const BarcodeScreen = () => {
       tempCartList.push(cartData);
       dispatch(updateCartList(tempCartList));
       setDataSubmitted(true);
+      setIsEditable(false);
       setName('');
       setPrice('');
       setGST('');
@@ -110,7 +117,7 @@ const BarcodeScreen = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <MaterialIcons name="qr-code-scanner" color={'white'} size={25} />
-        <Text style={styles.headerText}>QR Code Scanner</Text>
+        <Text style={styles.headerText}>Scanner Task</Text>
         {cartList?.length ? (
           <View style={styles.topBadgeCountView}>
             <Pressable
@@ -138,9 +145,8 @@ const BarcodeScreen = () => {
       <QRCodeScanner
         ref={scannerRef}
         onRead={onSuccess}
-        reactivate={scannerDeactivate && false}
         flashMode={RNCamera.Constants.FlashMode.off}
-        topContent={<Text style={styles.centerText}>Scan any QR</Text>}
+        topContent={<Text style={styles.centerText}>Please Scan</Text>}
       />
       {/* Bottom Sheet  */}
       {showBottomSheet && (
@@ -161,6 +167,7 @@ const BarcodeScreen = () => {
                   setName(name);
                 }}
                 placeholder="Name"
+                editable={isEditable ? false : true}
                 placeholderTextColor={'#808080'}
                 style={styles.input}
                 autoCapitalize={'none'}
@@ -172,6 +179,7 @@ const BarcodeScreen = () => {
                   setPrice(price);
                 }}
                 keyboardType="number-pad"
+                editable={isEditable ? false : true}
                 placeholder="Price"
                 placeholderTextColor={'#808080'}
                 style={styles.input}
@@ -182,10 +190,10 @@ const BarcodeScreen = () => {
                   setGST(gst);
                 }}
                 placeholder="GST"
+                editable={isEditable ? false : true}
                 placeholderTextColor={'#808080'}
                 style={styles.input}
-                autoCapitalize={'none'}
-                returnKeyType={'next'}
+                keyboardType="number-pad"
               />
               <View style={styles.rowButtons}>
                 <View style={{flex: 1, paddingRight: 10}}>
